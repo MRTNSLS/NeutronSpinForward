@@ -7,4 +7,7 @@ matplotlib
 ipywidgets
 IPython
 scikit-learn
+numpy
+tqdm
+pandas
 #python-tk seems needed for interactive plotting while training the model, at least when running in vscode

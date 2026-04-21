@@ -159,6 +159,7 @@ if __name__ == "__main__":
     fig, axs = plt.subplots(3, 3)
     for sp in range(0,3):
         for sa in range(0,3):
-                axs[sa, sp].imshow(measurement[:, :, 0, sp, sa], interpolation='none', vmin=-1, vmax=1)
+                im = axs[sa, sp].imshow(measurement[:, :, 0, sp, sa], interpolation='none', cmap='viridis')
+                plt.colorbar(im, ax=axs[sa, sp], fraction=0.046, pad=0.04)
     
     plt.show()

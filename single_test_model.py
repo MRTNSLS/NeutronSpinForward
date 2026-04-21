@@ -88,20 +88,30 @@ fig, axs = plt.subplots(3, 3)
 
 scale = 1e3
 
-for i in range(0,3):
-    i1 = B[:, :, i]*scale
-    i2 = predictions_original[0, :, :, i]*scale
-#     i3 = (i1-i2)/i2
-    i3 = (i1-i2)
+for i in range(0, 3):
+    i1 = B[:, :, i] * scale
+    i2 = predictions_original[0, :, :, i] * scale
+    i3 = (i1 - i2)
 
-    p1 = axs[0, i].imshow(i1, interpolation='none', vmin=-minmax_B*scale, vmax=minmax_B*scale)
+    # Independent scaling for Truth and Recon
+    vmax_true = np.abs(i1).max() * 1.1
+    if vmax_true < 1e-9: vmax_true = 1e-9
+    vmax_pred = np.abs(i2).max() * 1.1
+    if vmax_pred < 1e-9: vmax_pred = 1e-9
+    
+    p1 = axs[0, i].imshow(i1, interpolation='none', vmin=-vmax_true, vmax=vmax_true, cmap='coolwarm')
     fig.colorbar(p1, ax=axs[0, i])
+    axs[0, i].set_title(f"True {'XYZ'[i]}")
 
-    p2 = axs[1, i].imshow(i2, interpolation='none', vmin=-minmax_B*scale, vmax=minmax_B*scale)
+    p2 = axs[1, i].imshow(i2, interpolation='none', vmin=-vmax_pred, vmax=vmax_pred, cmap='coolwarm')
     fig.colorbar(p2, ax=axs[1, i])
+    axs[1, i].set_title(f"Pred {'XYZ'[i]}")
 
-    p3 = axs[2, i].imshow(i3, interpolation='none', vmin=-minmax_B*scale, vmax=minmax_B*scale)
+    vmax_err = np.abs(i3).max() * 1.1
+    if vmax_err < 1e-9: vmax_err = 1e-9
+    p3 = axs[2, i].imshow(i3, interpolation='none', vmin=-vmax_err, vmax=vmax_err, cmap='RdBu_r')
     fig.colorbar(p3, ax=axs[2, i])
+    axs[2, i].set_title(f"Error {'XYZ'[i]}")
 
     
 plt.show() 

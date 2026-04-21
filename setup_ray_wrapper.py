@@ -1,4 +1,4 @@
-from distutils.core import setup, Extension   # sudo apt install python-distutils-extra, sudo get install python3-dev
+from setuptools import setup, Extension
 import numpy
 
 # define the extension module
@@ -6,7 +6,7 @@ ray_wrapper_module = Extension('ray_wrapper', sources=['ray_wrapper.c'],
                                include_dirs=[numpy.get_include()])
 
 # run the setup
-setup(ext_modules=[ray_wrapper_module])
+setup(name='ray_wrapper_ext', ext_modules=[ray_wrapper_module])
 
 #python setup_ray_wrapper.py build_ext --inplace
 

@@ -1,13 +1,21 @@
-jacobs_rays/
+# Ignore virtual environments
 venv/
 .venv/
-.DS_Store/
+
+# Ignore compiled C-extension and build artifacts
+jacobs_rays/
+build/
+*.so
+__pycache__/
+*.pyc
+
+# Ignore OS-specific files
+.DS_Store
+
+# Ignore data and model directories (large binary files)
 data/
-.venv
-models/my_model_40.h5
-models/my_model_41.h5
-models/my_model_40.h5
-models/my_model_30.h5
-models/my_model_21.h5
-models/my_model_105.h5
-models/my_model_106.h5
+data_v2/
+models/
+models_v3_cpu/
+artifacts/
+reconstruction_v2/demo_model/
