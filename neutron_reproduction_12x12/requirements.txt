@@ -1,0 +1,7 @@
+numpy
+numpy-quaternion
+torch
+matplotlib
+tqdm
+scipy
+setuptools
