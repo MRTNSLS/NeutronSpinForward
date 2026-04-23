@@ -1,11 +1,6 @@
 import numpy as np
 import torch
 
-def yrot_quat(theta):
-    # This is for the original numpy logic validation if needed
-    import quaternion # Requires numpy-quaternion
-    return quaternion.quaternion(np.cos(theta*0.5),0,np.sin(theta*0.5),0)
-
 def yrot_matrix(theta_tensor):
     """
     Returns rotation matrix for rotation around Y axis by theta.
