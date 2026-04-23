@@ -78,7 +78,7 @@ Follow these steps in order to reproduce the 12x12 results:
 ## 6. Example Results
 
 ### 6.1 Input Data (Sinograms)
-The following sinograms show the polarization components measured at different wavelengths. Note the increased complexity in the precession patterns at longer wavelengths ($7.6\text{ \AA}$).
+The following sinograms show the polarization components measured at different wavelengths. Note the increased complexity in the precession patterns at longer wavelengths ($7.6\text{Å}$).
 
 ![Sinogram Gallery](results/examples/sinograms.png)
 
