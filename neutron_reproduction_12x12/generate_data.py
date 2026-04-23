@@ -33,7 +33,7 @@ def generate_dataset(num_samples=500, im_size=12):
     wavelengths = np.arange(2.0, 8.0, 0.4) * 1e-10
     scaleD = 2.0
     voxel_size = 1e-2 / im_size
-    minmax_B = 1e-3
+    minmax_B = 5e-3
     seed = 42
     np.random.seed(seed)
     

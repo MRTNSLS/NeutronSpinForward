@@ -25,13 +25,14 @@ We use a vectorized forward model implemented in PyTorch to calculate these matr
 ## 3. Methodology
 
 ### 3.1 Synthetic Dataset Generation
-We generate physically plausible continuous magnetic fields rather than uncorrelated noise.
+The generation process produces physically plausible continuous magnetic fields. The following parameters are **representative examples** used for the 12x12 grid, but can be adjusted in `generate_data.py`:
+
 - **Source**: White noise sampled on a 10x10 grid (centered in the 12x12 volume).
 - **Smoothing**: Application of a Gaussian filter ($\sigma = 1.2$) to ensure vector field continuity.
-- **Normalization**: Fields are clipped to a maximum magnitude of $1 \times 10^{-3} \text{ T}$.
+- **Normalization**: Fields are typically clipped to a maximum magnitude (effective example: $minmax\_B = 5 \times 10^{-3} \text{ T}$).
 
 ### 3.2 Computational Optimization (Memory Mapping)
-A 500-sample dataset at 12x12 resolution results in a precession tensor of shape `(500, 251, 451, 15, 3, 3)`, which occupies approximately **30.5 GB** of memory. To prevent system crashes on standard hardware, we utilize **Memory Mapping** (`np.memmap`). This allows the training process to stream data directly from disk, maintaining a small Resident Set Size (RSS) in RAM.
+A 500-sample dataset with the configuration below (e.g., 251 neutrons, 451 angles, 15 wavelengths) results in a precession tensor of shape `(num_samples, nNeutrons, nAngles, nWavelengths, 3, 3)`. For our 12x12 setup, this occupies approximately **30.5 GB** of memory.
 
 ## 4. Deep Learning Architecture: Spin2DNet
 
