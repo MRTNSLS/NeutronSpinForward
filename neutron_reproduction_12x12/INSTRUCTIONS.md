@@ -74,5 +74,17 @@ Follow these steps in order to reproduce the 12x12 results:
     python evaluate_results.py
     ```
 
-## 6. Conclusion
+## 6. Example Results
+
+### 6.1 Input Data (Sinograms)
+The following sinograms show the polarization components measured at different wavelengths. Note the increased complexity in the precession patterns at longer wavelengths ($7.6\text{ \AA}$).
+
+![Sinogram Gallery](results/examples/sinograms.png)
+
+### 6.2 Reconstruction Fidelity
+Below is an example of the true vs. reconstructed magnetic field components ($B_x, B_y, B_z$) for the $12\times12$ resolution grid at high field magnitude ($5 \times 10^{-3}\text{ T}$).
+
+![Reconstruction Result](results/examples/reconstruction.png)
+
+## 7. Conclusion
 The resulting `results/evaluation_12x12.png` plot provides a component-wise comparison of the true and reconstructed fields. The model typically achieves high fidelity in recovering the smooth topological features of the magnetic vector field, demonstrating the effectiveness of the convolution-to-linear domain mapping for neutron polarimetric reconstruction.
