@@ -11,7 +11,17 @@ def train(args):
     device = torch.device('cuda' if torch.cuda.is_available() and args.use_gpu else 'cpu')
     print(f"Loading data from {args.b_path} and {args.a_path}...")
     
-    ds = NSpinFullDimDataset(args.b_path, args.a_path, num_samples=args.num_samples)
+    # Calculate training split
+    import numpy as np
+    full_a = np.load(args.a_path)
+    total_available = len(full_a)
+    if args.num_samples is not None:
+        total_available = min(total_available, args.num_samples)
+    
+    train_count = int(total_available * args.train_split)
+    print(f"Using {train_count} samples for training (Split: {args.train_split}).")
+    
+    ds = NSpinFullDimDataset(args.b_path, args.a_path, num_samples=train_count, start_idx=0)
     dl = DataLoader(ds, batch_size=args.batch_size, shuffle=True, num_workers=0)
 
     # Infer sizes from the first data sample
@@ -64,7 +74,8 @@ def main():
     parser.add_argument('--lr', type=float, default=1e-3)
     parser.add_argument('--hidden_dim', type=int, default=64)
     parser.add_argument('--out_dir', type=str, default='models')
-    parser.add_argument('--num_samples', type=int, default=None)
+    parser.add_argument('--num_samples', type=int, default=None, help='Total samples to consider before splitting')
+    parser.add_argument('--train_split', type=float, default=0.8, help='Fraction of data to use for training')
     parser.add_argument('--use_gpu', action='store_true', default=False)
     args = parser.parse_args()
     

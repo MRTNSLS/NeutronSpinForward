@@ -67,12 +67,14 @@ Follow these steps in order to reproduce the 12x12 results:
     python generate_data.py
     ```
 2.  **Train Model**:
+    Trains on the first 80% of the generated data (default split).
     ```bash
-    python train_model.py --epochs 50
+    python train_model.py --epochs 50 --train_split 0.8
     ```
 3.  **Evaluate and Visualize**:
+    Evaluates exclusively on the remaining 20% of unseen data.
     ```bash
-    python evaluate_results.py
+    python evaluate_results.py --train_split 0.8
     ```
 
 ## 6. Example Results

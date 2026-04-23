@@ -4,7 +4,7 @@ from torch.utils.data import Dataset
 import os
 
 class NSpinFullDimDataset(Dataset):
-    def __init__(self, b_path, a_path, num_samples=None):
+    def __init__(self, b_path, a_path, num_samples=None, start_idx=0):
         """
         Loads the multidimensional dataset.
         B_raw: (N, nNeutrons, nAngles, nWavelengths, 3, 3)
@@ -12,8 +12,14 @@ class NSpinFullDimDataset(Dataset):
         """
         # Load A_raw first (small)
         A_raw = np.load(a_path)
+        total_available = len(A_raw)
+        
+        # Determine slice indices
+        end_idx = total_available
         if num_samples is not None:
-            A_raw = A_raw[:num_samples]
+            end_idx = min(start_idx + num_samples, total_available)
+        
+        A_raw = A_raw[start_idx:end_idx]
         
         # Try to load meta to get minmax_B
         meta_path = b_path.replace('B_data_', 'meta_').replace('.npy', '.npz')
@@ -24,9 +30,8 @@ class NSpinFullDimDataset(Dataset):
                     self.minmax_B = float(meta['minmax_B'])
         
         # Load B_raw using memory mapping to prevent OOM
-        self.B_raw = np.load(b_path, mmap_mode='r')
-        if num_samples is not None:
-            self.B_raw = self.B_raw[:num_samples]
+        # Slicing the memmap is efficient
+        self.B_raw = np.load(b_path, mmap_mode='r')[start_idx:end_idx]
         
         self.length = self.B_raw.shape[0]
         

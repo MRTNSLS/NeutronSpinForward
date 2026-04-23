@@ -9,7 +9,18 @@ from reproduce_neutron.model import SpinToBNet
 
 def evaluate(args):
     print(f"Loading data from {args.b_path}...")
-    ds = NSpinFullDimDataset(args.b_path, args.a_path)
+    
+    # Identify the test split (unseen data)
+    full_a = np.load(args.a_path)
+    total_available = len(full_a)
+    if args.num_samples is not None:
+        total_available = min(total_available, args.num_samples)
+    
+    start_idx = int(total_available * args.train_split)
+    test_count = total_available - start_idx
+    print(f"Evaluating on {test_count} unseen samples (Start index: {start_idx}).")
+    
+    ds = NSpinFullDimDataset(args.b_path, args.a_path, num_samples=test_count, start_idx=start_idx)
 
     sample_b, sample_a = ds[0]
     in_channels = sample_b.shape[0]
@@ -84,6 +95,8 @@ if __name__ == '__main__':
     parser.add_argument('--model_path', type=str, default='models/spin2b_12x12.pth')
     parser.add_argument('--output_path', type=str, default='results/evaluation_12x12.png')
     parser.add_argument('--hidden_dim', type=int, default=64)
+    parser.add_argument('--num_samples', type=int, default=None, help='Total samples to consider (same as used in training)')
+    parser.add_argument('--train_split', type=float, default=0.8, help='Portion of data that was used for training (will be skipped)')
     parser.add_argument('--use_gpu', action='store_true', default=False)
     args = parser.parse_args()
     evaluate(args)
