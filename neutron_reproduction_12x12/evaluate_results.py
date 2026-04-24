@@ -79,11 +79,22 @@ def evaluate(args):
         # --- 2. 1D SPECTRAL CURVES (9 components for a central ray) ---
         mid_a = nAngles // 2
         mid_n = nNeutrons // 2
+        
+        # Try to load wavelengths from meta file
+        meta_path = args.b_path.replace('B_data_', 'meta_').replace('.npy', '.npz')
+        wavelengths_val = np.arange(nW)
+        x_label = "Wavelength Index"
+        if os.path.exists(meta_path):
+            with np.load(meta_path, allow_pickle=True) as meta:
+                if 'wavelengths' in meta:
+                    wavelengths_val = meta['wavelengths'] * 1e10 # Convert to Angstrom
+                    x_label = "Wavelength (Å)"
+
         fig_spec, ax_spec = plt.subplots(figsize=(10, 6))
         for i in range(9):
             signal = [xb[w * 9 + i, mid_a, mid_n].item() for w in range(nW)]
-            ax_spec.plot(range(nW), signal, label=f"P_{p_labels[i]}", marker='o', markersize=4, linewidth=1.5)
-        ax_spec.set_xlabel("Wavelength Index")
+            ax_spec.plot(wavelengths_val, signal, label=f"P_{p_labels[i]}", marker='o', markersize=4, linewidth=1.5)
+        ax_spec.set_xlabel(x_label)
         ax_spec.set_ylabel("Polarization Value")
         ax_spec.set_title(f"Sample {sample_idx} - Spectral Signature (Ray: {mid_n}, Angle: {mid_a})")
         ax_spec.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
