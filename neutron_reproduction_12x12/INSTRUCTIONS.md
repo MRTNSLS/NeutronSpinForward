@@ -79,15 +79,16 @@ Follow these steps in order to reproduce the 12x12 results:
 
 ## 6. Example Results
 
-### 6.1 Input Data (Sinograms)
-The following sinograms show the polarization components measured at different wavelengths. Note the increased complexity in the precession patterns at longer wavelengths ($7.6\text{Å}$).
+### 6.1 Input Data (Sinograms and Spectra)
+The following sinograms show the full polarization components ($P_{xx}$ to $P_{zz}$) measured for a single wavelength. The spectral curves track the precession signal across all 15 wavelengths for a central ray.
 
-![Sinogram Gallery](results/examples/sinograms.png)
+![Sinogram Gallery](results/examples/sinograms_sample_50.png)
+![Spectral Response](results/examples/spectral_sample_50.png)
 
 ### 6.2 Reconstruction Fidelity
-Below is an example of the true vs. reconstructed magnetic field components ($B_x, B_y, B_z$) for the $12\times12$ resolution grid at high field magnitude ($5 \times 10^{-3}\text{ T}$).
+Below is an example of the true vs. reconstructed magnetic field components ($B_x, B_y, B_z$) for the $12\times12$ resolution grid.
 
-![Reconstruction Result](results/examples/reconstruction.png)
+![Reconstruction Result](results/examples/reconstruction_sample_50.png)
 
 ## 7. Conclusion
-The resulting `results/evaluation_12x12.png` plot provides a component-wise comparison of the true and reconstructed fields. The model typically achieves high fidelity in recovering the smooth topological features of the magnetic vector field, demonstrating the effectiveness of the convolution-to-linear domain mapping for neutron polarimetric reconstruction.
+The detailed evaluation plots (e.g., `results/reconstruction_sample_50.png`) provide a component-wise comparison of the true and reconstructed fields. The model typically achieves high fidelity in recovering the smooth topological features of the magnetic vector field, demonstrating the effectiveness of the convolution-to-linear domain mapping for neutron polarimetric reconstruction.
