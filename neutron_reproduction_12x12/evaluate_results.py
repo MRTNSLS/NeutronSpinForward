@@ -45,9 +45,10 @@ def evaluate(args):
     # Pick a few samples for visualization
     samples_indices = [num_samples // 10, num_samples // 2, (9 * num_samples) // 10]
     
-    fig, axes = plt.subplots(len(samples_indices) * 4, 3, figsize=(15, 4 * len(samples_indices) * 4))
+    os.makedirs('results', exist_ok=True)
     
     for idx, sample_idx in enumerate(samples_indices):
+        print(f"Generating detailed plots for sample {sample_idx}...")
         xb, xa = ds[sample_idx]
         with torch.no_grad():
             inp = xb.unsqueeze(0).to(device)
@@ -57,50 +58,77 @@ def evaluate(args):
         pred_np = pred_a.numpy().transpose(1, 2, 0)
         diff_np = np.abs(xa_np - pred_np)
 
-        row_start = idx * 4
-        
-        # --- SINOGRAMS ---
-        # Show ZZ component for first, middle, and last wavelength
+        p_labels = ['xx', 'xy', 'xz', 'yx', 'yy', 'yz', 'zx', 'zy', 'zz']
         nW = in_channels // 9
-        wl_indices = [0, nW // 2, nW - 1]
-        for i, wl_idx in enumerate(wl_indices):
-            ax_sino = axes[row_start, i]
-            # Component 'zz' is at index 8 of each wavelength block
-            sino_idx = wl_idx * 9 + 8
-            # xb shape (135, nA, nN)
-            im_sino = ax_sino.imshow(xb[sino_idx].numpy(), aspect='auto', cmap='viridis')
-            ax_sino.set_title(f"Sample {sample_idx} - Sinogram (ZZ) λ index {wl_idx}")
-            plt.colorbar(im_sino, ax=ax_sino)
 
+        # --- 1. SINOGRAM GALLERY (9 components for middle wavelength) ---
+        mid_w = nW // 2
+        fig_sino, axes_sino = plt.subplots(3, 3, figsize=(14, 12))
+        for i in range(9):
+            sino_idx = mid_w * 9 + i
+            ax = axes_sino[i // 3, i % 3]
+            im = ax.imshow(xb[sino_idx].numpy(), aspect='auto', cmap='viridis')
+            ax.set_title(f"P_{p_labels[i]} (λ index {mid_w})")
+            fig_sino.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
+        fig_sino.suptitle(f"Sample {sample_idx} - Full Polarization Sinograms", fontsize=16)
+        plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+        sino_path = f'results/sinograms_sample_{sample_idx}.png'
+        fig_sino.savefig(sino_path, dpi=150)
+        plt.close(fig_sino)
+
+        # --- 2. 1D SPECTRAL CURVES (9 components for a central ray) ---
+        mid_a = nAngles // 2
+        mid_n = nNeutrons // 2
+        fig_spec, ax_spec = plt.subplots(figsize=(10, 6))
+        for i in range(9):
+            signal = [xb[w * 9 + i, mid_a, mid_n].item() for w in range(nW)]
+            ax_spec.plot(range(nW), signal, label=f"P_{p_labels[i]}", marker='o', markersize=4, linewidth=1.5)
+        ax_spec.set_xlabel("Wavelength Index")
+        ax_spec.set_ylabel("Polarization Value")
+        ax_spec.set_title(f"Sample {sample_idx} - Spectral Signature (Ray: {mid_n}, Angle: {mid_a})")
+        ax_spec.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+        ax_spec.grid(True, linestyle='--', alpha=0.6)
+        plt.tight_layout()
+        spec_path = f'results/spectral_sample_{sample_idx}.png'
+        fig_spec.savefig(spec_path, dpi=150)
+        plt.close(fig_spec)
+
+        # --- 3. RECONSTRUCTION COMPARISON ---
+        fig_recon, axes_recon = plt.subplots(3, 3, figsize=(15, 13))
         components = ['Bx', 'By', 'Bz']
-        
         for c in range(3):
             vmax_true = np.abs(xa_np[:, :, c]).max() * 1.1
             if vmax_true < 1e-9: vmax_true = 1e-9
             vmax_pred = np.abs(pred_np[:, :, c]).max() * 1.1
             if vmax_pred < 1e-9: vmax_pred = 1e-9
             
-            # TRUE
-            ax_true = axes[row_start + 1, c]
-            ax_true.imshow(xa_np[:, :, c], cmap='coolwarm', vmin=-vmax_true, vmax=vmax_true, origin='lower')
+            # Row 0: True
+            ax_true = axes_recon[0, c]
+            im_true = ax_true.imshow(xa_np[:, :, c], cmap='coolwarm', vmin=-vmax_true, vmax=vmax_true, origin='lower')
             ax_true.set_title(f"True {components[c]}")
+            fig_recon.colorbar(im_true, ax=ax_true, fraction=0.046, pad=0.04)
             
-            # RECON
-            ax_recon = axes[row_start + 2, c]
-            ax_recon.imshow(pred_np[:, :, c], cmap='coolwarm', vmin=-vmax_pred, vmax=vmax_pred, origin='lower')
+            # Row 1: Reconstruction
+            ax_recon = axes_recon[1, c]
+            im_recon = ax_recon.imshow(pred_np[:, :, c], cmap='coolwarm', vmin=-vmax_pred, vmax=vmax_pred, origin='lower')
             ax_recon.set_title(f"Reconstructed {components[c]}")
+            fig_recon.colorbar(im_recon, ax=ax_recon, fraction=0.046, pad=0.04)
             
-            # ERROR
-            ax_err = axes[row_start + 3, c]
+            # Row 2: Absolute Error
+            ax_err = axes_recon[2, c]
             err_max = diff_np[:, :, c].max() * 1.1
             if err_max < 1e-9: err_max = 1e-9
-            ax_err.imshow(diff_np[:, :, c], cmap='Reds', origin='lower', vmin=0, vmax=err_max)
+            im_err = ax_err.imshow(diff_np[:, :, c], cmap='Reds', origin='lower', vmin=0, vmax=err_max)
             ax_err.set_title(f"Abs Error {components[c]}")
+            fig_recon.colorbar(im_err, ax=ax_err, fraction=0.046, pad=0.04)
 
-    plt.tight_layout()
-    os.makedirs('results', exist_ok=True)
-    plt.savefig(args.output_path, dpi=150)
-    print(f"Saved evaluation plots to {args.output_path}")
+        fig_recon.suptitle(f"Sample {sample_idx} - Field Reconstruction Comparison", fontsize=16)
+        plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+        recon_path = f'results/reconstruction_sample_{sample_idx}.png'
+        fig_recon.savefig(recon_path, dpi=150)
+        plt.close(fig_recon)
+
+    print(f"Evaluation complete. Plots saved to 'results/' directory.")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
