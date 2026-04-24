@@ -92,3 +92,19 @@ Below is an example of the true vs. reconstructed magnetic field components ($B_
 
 ## 7. Conclusion
 The detailed evaluation plots (e.g., `results/reconstruction_sample_10.png`) provide a component-wise comparison of the true and reconstructed fields. The model typically achieves high fidelity in recovering the smooth topological features of the magnetic vector field, demonstrating the effectiveness of the convolution-to-linear domain mapping for neutron polarimetric reconstruction.
+
+## 8. Scaling for Improved Fidelity
+
+To achieve higher reconstruction accuracy or handle more complex magnetic field geometries, the following parameters in `generate_data.py` can be adjusted:
+
+### 8.1 Dataset Diversity (`num_samples`)
+Increasing the number of training samples (e.g., to 2000+) is the most direct way to improve generalization. This reduces artifacts and improves the model's robustness to unseen field configurations. Note that larger datasets require more training epochs to converge.
+
+### 8.2 Spectral Resolution (`wavelengths`)
+Adding more wavelength points (e.g., reducing the step to 0.2 Å) provides the model with more phase information. This is critical for high-field reconstructions where the spin might undergo multiple $2\pi$ rotations, as it helps the model "unwrap" the precession signal more reliably.
+
+### 8.3 Measurement Density (`nAngles`, `nNeutrons`)
+Increasing the number of projection angles or neutrons per angle increases the resolution of the input sinogram. Because `Spin2DNet` uses adaptive pooling, the architecture automatically scales to accommodate larger input dimensions without modification.
+
+### 8.4 Field Complexity (`sigma`)
+The Gaussian smoothing factor `sigma` in `generate_smooth_b_field` controls the spatial frequency of the generated fields. Reducing this value (e.g., to 0.8) produces fields with sharper features, which can be used to train a model capable of reconstructing more intricate magnetic structures.
