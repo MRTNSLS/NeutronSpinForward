@@ -105,6 +105,14 @@ def evaluate(args):
         plt.close(fig_spec)
 
         # --- 3. RECONSTRUCTION COMPARISON ---
+        # Get physical scale from meta if available
+        voxel_size_mm = 0.833 # Default for 1cm grid at 12x12
+        if os.path.exists(meta_path):
+            with np.load(meta_path, allow_pickle=True) as meta:
+                if 'voxel_size' in meta:
+                    voxel_size_mm = float(meta['voxel_size']) * 1e3
+        extent = [0, voxel_size_mm * im_size, 0, voxel_size_mm * im_size]
+
         fig_recon, axes_recon = plt.subplots(3, 3, figsize=(15, 13))
         components = ['Bx', 'By', 'Bz']
         for c in range(3):
@@ -115,23 +123,26 @@ def evaluate(args):
             
             # Row 0: True
             ax_true = axes_recon[0, c]
-            im_true = ax_true.imshow(xa_np[:, :, c], cmap='coolwarm', vmin=-vmax_true, vmax=vmax_true, origin='lower')
+            im_true = ax_true.imshow(xa_np[:, :, c], cmap='coolwarm', vmin=-vmax_true, vmax=vmax_true, origin='lower', extent=extent)
             ax_true.set_title(f"True {components[c]}")
-            fig_recon.colorbar(im_true, ax=ax_true, fraction=0.046, pad=0.04)
+            ax_true.set_xlabel("x [mm]"); ax_true.set_ylabel("y [mm]")
+            fig_recon.colorbar(im_true, ax=ax_true, fraction=0.046, pad=0.04, label="B [T]")
             
             # Row 1: Reconstruction
             ax_recon = axes_recon[1, c]
-            im_recon = ax_recon.imshow(pred_np[:, :, c], cmap='coolwarm', vmin=-vmax_pred, vmax=vmax_pred, origin='lower')
+            im_recon = ax_recon.imshow(pred_np[:, :, c], cmap='coolwarm', vmin=-vmax_pred, vmax=vmax_pred, origin='lower', extent=extent)
             ax_recon.set_title(f"Reconstructed {components[c]}")
-            fig_recon.colorbar(im_recon, ax=ax_recon, fraction=0.046, pad=0.04)
+            ax_recon.set_xlabel("x [mm]"); ax_recon.set_ylabel("y [mm]")
+            fig_recon.colorbar(im_recon, ax=ax_recon, fraction=0.046, pad=0.04, label="B [T]")
             
             # Row 2: Absolute Error
             ax_err = axes_recon[2, c]
             err_max = diff_np[:, :, c].max() * 1.1
             if err_max < 1e-9: err_max = 1e-9
-            im_err = ax_err.imshow(diff_np[:, :, c], cmap='Reds', origin='lower', vmin=0, vmax=err_max)
+            im_err = ax_err.imshow(diff_np[:, :, c], cmap='Reds', origin='lower', vmin=0, vmax=err_max, extent=extent)
             ax_err.set_title(f"Abs Error {components[c]}")
-            fig_recon.colorbar(im_err, ax=ax_err, fraction=0.046, pad=0.04)
+            ax_err.set_xlabel("x [mm]"); ax_err.set_ylabel("y [mm]")
+            fig_recon.colorbar(im_err, ax=ax_err, fraction=0.046, pad=0.04, label="|ΔB| [T]")
 
         fig_recon.suptitle(f"Sample {sample_idx} - Field Reconstruction Comparison", fontsize=16)
         plt.tight_layout(rect=[0, 0.03, 1, 0.95])
