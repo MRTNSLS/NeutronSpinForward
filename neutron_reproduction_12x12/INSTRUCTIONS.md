@@ -32,13 +32,13 @@ The generation process produces physically plausible continuous magnetic fields.
 - **Normalization**: Fields are typically clipped to a maximum magnitude (effective example: $minmax\_B = 5 \times 10^{-3} \text{ T}$).
 
 ### 3.2 Computational Optimization (Memory Mapping)
-A 500-sample dataset with the configuration below (e.g., 251 neutrons, 451 angles, 15 wavelengths) results in a precession tensor of shape `(num_samples, nNeutrons, nAngles, nWavelengths, 3, 3)`. For our 12x12 setup, this occupies approximately **30.5 GB** of memory.
+A 1000-sample dataset with the configuration below (e.g., 256 neutrons, 360 angles, 60 wavelengths) results in a precession tensor of shape `(num_samples, nNeutrons, nAngles, nWavelengths, 3, 3)`. For our 12x12 setup, this occupies approximately **300 GB** of memory.
 
 ## 4. Deep Learning Architecture: Spin2DNet
 
 The reconstruction task is handled by `Spin2DNet`, a specialized architecture designed for CPU-efficient sinogram-to-image translation:
 
-1.  **Encoder**: A series of 2D convolutional layers extract local spectral features from the 135-channel input (9 polarization components $\times$ 15 wavelengths).
+1.  **Encoder**: A series of 2D convolutional layers extract local spectral features from the 540-channel input (9 polarization components $\times$ 60 wavelengths).
 2.  **Bottleneck**: Adaptive average pooling reduces the spatial dimensions of the sinogram features to a fixed $18 \times 6$ representation.
 3.  **Domain Transform**: Fully connected layers map the flattened features into the $12 \times 12 \times 3$ image space, effectively learning the inverse of the Radon-like magnetic transform.
 4.  **Refinement**: Final 2D convolutions enforce spatial consistency and smooth the reconstructed vector field components ($B_x, B_y, B_z$).
@@ -67,20 +67,20 @@ Follow these steps in order to reproduce the 12x12 results:
     python generate_data.py
     ```
 2.  **Train Model**:
-    Trains on the first 80% of the generated data (default split).
+    Trains on the first 95% of the generated data (default split).
     ```bash
-    python train_model.py --epochs 50 --train_split 0.8
+    python train_model.py --epochs 100 --train_split 0.95
     ```
 3.  **Evaluate and Visualize**:
-    Evaluates exclusively on the remaining 20% of unseen data.
+    Evaluates exclusively on the remaining 5% of unseen data.
     ```bash
-    python evaluate_results.py --train_split 0.8
+    python evaluate_results.py --train_split 0.95
     ```
 
 ## 6. Example Results
 
 ### 6.1 Input Data (Sinograms and Spectra)
-The following sinograms show the full polarization components ($P_{xx}$ to $P_{zz}$) measured for a single wavelength. The spectral curves track the precession signal across all 15 wavelengths for a central ray.
+The following sinograms show the full polarization components ($P_{xx}$ to $P_{zz}$) measured for a single wavelength. The spectral curves track the precession signal across all 60 wavelengths for a central ray.
 
 ![Sinogram Gallery](results/examples/sinograms_sample_10.png)
 ![Spectral Response](results/examples/spectral_sample_10.png)

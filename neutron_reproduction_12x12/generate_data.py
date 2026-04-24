@@ -24,13 +24,13 @@ def generate_smooth_b_field(im_size, num_samples, minmax_B=5e-3):
         A_data[i, 1:-1, 1:-1, :] = grid
     return A_data
 
-def generate_dataset(num_samples=500, im_size=12):
+def generate_dataset(num_samples=1000, im_size=12):
     out_dir = 'data'
     os.makedirs(out_dir, exist_ok=True)
     
-    nNeutrons = 251
-    nAngles = 451
-    wavelengths = np.arange(2.0, 8.0, 0.4) * 1e-10
+    nNeutrons = 256
+    nAngles = 360
+    wavelengths = np.arange(2.0, 8.0, 0.1) * 1e-10
     scaleD = 2.0
     voxel_size = 1e-2 / im_size
     minmax_B = 5e-3

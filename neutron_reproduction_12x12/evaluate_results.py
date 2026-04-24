@@ -165,7 +165,7 @@ if __name__ == '__main__':
     parser.add_argument('--output_path', type=str, default='results/evaluation_12x12.png')
     parser.add_argument('--hidden_dim', type=int, default=64)
     parser.add_argument('--num_samples', type=int, default=None, help='Total samples to consider (same as used in training)')
-    parser.add_argument('--train_split', type=float, default=0.8, help='Portion of data that was used for training (will be skipped)')
+    parser.add_argument('--train_split', type=float, default=0.95, help='Portion of data that was used for training (will be skipped)')
     parser.add_argument('--use_gpu', action='store_true', default=False)
     args = parser.parse_args()
     evaluate(args)
