@@ -45,7 +45,7 @@ def evaluate(args):
     # Pick a few samples for visualization
     samples_indices = [num_samples // 10, num_samples // 2, (9 * num_samples) // 10]
     
-    fig, axes = plt.subplots(len(samples_indices) * 3, 3, figsize=(15, 4 * len(samples_indices) * 3))
+    fig, axes = plt.subplots(len(samples_indices) * 4, 3, figsize=(15, 4 * len(samples_indices) * 4))
     
     for idx, sample_idx in enumerate(samples_indices):
         xb, xa = ds[sample_idx]
@@ -57,7 +57,21 @@ def evaluate(args):
         pred_np = pred_a.numpy().transpose(1, 2, 0)
         diff_np = np.abs(xa_np - pred_np)
 
-        row_start = idx * 3
+        row_start = idx * 4
+        
+        # --- SINOGRAMS ---
+        # Show ZZ component for first, middle, and last wavelength
+        nW = in_channels // 9
+        wl_indices = [0, nW // 2, nW - 1]
+        for i, wl_idx in enumerate(wl_indices):
+            ax_sino = axes[row_start, i]
+            # Component 'zz' is at index 8 of each wavelength block
+            sino_idx = wl_idx * 9 + 8
+            # xb shape (135, nA, nN)
+            im_sino = ax_sino.imshow(xb[sino_idx].numpy(), aspect='auto', cmap='viridis')
+            ax_sino.set_title(f"Sample {sample_idx} - Sinogram (ZZ) λ index {wl_idx}")
+            plt.colorbar(im_sino, ax=ax_sino)
+
         components = ['Bx', 'By', 'Bz']
         
         for c in range(3):
@@ -67,17 +81,17 @@ def evaluate(args):
             if vmax_pred < 1e-9: vmax_pred = 1e-9
             
             # TRUE
-            ax_true = axes[row_start, c]
+            ax_true = axes[row_start + 1, c]
             ax_true.imshow(xa_np[:, :, c], cmap='coolwarm', vmin=-vmax_true, vmax=vmax_true, origin='lower')
-            ax_true.set_title(f"Sample {sample_idx} - True {components[c]}")
+            ax_true.set_title(f"True {components[c]}")
             
             # RECON
-            ax_recon = axes[row_start+1, c]
+            ax_recon = axes[row_start + 2, c]
             ax_recon.imshow(pred_np[:, :, c], cmap='coolwarm', vmin=-vmax_pred, vmax=vmax_pred, origin='lower')
             ax_recon.set_title(f"Reconstructed {components[c]}")
             
             # ERROR
-            ax_err = axes[row_start + 2, c]
+            ax_err = axes[row_start + 3, c]
             err_max = diff_np[:, :, c].max() * 1.1
             if err_max < 1e-9: err_max = 1e-9
             ax_err.imshow(diff_np[:, :, c], cmap='Reds', origin='lower', vmin=0, vmax=err_max)
