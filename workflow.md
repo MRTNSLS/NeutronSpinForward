@@ -79,6 +79,16 @@ This script supervises the network architecture learning process. By default, it
 5.  **Model Export**: 
     The post-training model weights are serialized as a state dictionary and output to `models/spin2b_12x12.pth` for permanent safe-keeping and downstream evaluation.
 
+### Deep Dive: Dimensionality and Data Flow
+
+To understand the necessity of the `18x6` dimensionality bottleneck in `SpinToBNet`, one must trace the massive size of the raw dataset:
+
+1. **Raw Shape:** A single raw datapoint begins at `(nNeutrons=256, nAngles=360, nWavelengths=60, 3, 3)`.
+2. **Channel Flattening:** `dataset.py` transposes and flattens the $3 \times 3$ matrices across the 60 wavelengths. It enters the PyTorch model mimicking a 2D image shaped `(Channels=540, Height=360, Width=256)`.
+3. **Convolutional Encoding:** `padding=1` allows the network layers to isolate features without collapsing the resolution. The signal emerges as `(Channels=128, Height=360, Width=256)`. 
+4. **Adaptive Pool Bottleneck:** If passed directly into a Dense/Fully Connected linear domain-transform matrix, the input vector would consist of $128 \times 360 \times 256 \approx \mathbf{11.7 \text{ million features}}$, requiring around 48 gigabytes of RAM just for the weight matrix!
+5. **The `18x6` Fix:** By heavily downsampling the space via PyTorch's `nn.AdaptiveAvgPool2d((18, 6))`, the spatial dimensionality is mathematically folded. The vector compresses down to just $128 \times 18 \times 6 = \mathbf{13,824 \text{ features}}$, enabling hyper-fast, low-memory translation into the reconstructed $12\times12$ parameter grid format.
+
 ---
 
 ## 3. Result Visualization (`evaluate_results.py`)
