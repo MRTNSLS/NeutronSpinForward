@@ -1,0 +1,10 @@
+numpy==1.26.0
+numpy-quaternion
+setuptools  # for distutils
+tensorflow
+PyQt6
+matplotlib
+ipywidgets
+IPython
+scikit-learn
+#python-tk seems needed for interactive plotting while training the model, at least when running in vscode

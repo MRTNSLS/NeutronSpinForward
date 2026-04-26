@@ -1,0 +1,13 @@
+jacobs_rays/
+venv/
+.venv/
+.DS_Store/
+data/
+.venv
+models/my_model_40.h5
+models/my_model_41.h5
+models/my_model_40.h5
+models/my_model_30.h5
+models/my_model_21.h5
+models/my_model_105.h5
+models/my_model_106.h5
