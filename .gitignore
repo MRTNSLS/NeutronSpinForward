@@ -18,4 +18,6 @@ data_v2/
 models/
 models_v3_cpu/
 artifacts/
-reconstruction_v2/demo_model/
+reconstruction_v2/
+models_test/
+tests/
