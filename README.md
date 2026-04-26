@@ -60,6 +60,9 @@ python setup_ray_wrapper.py build_ext --inplace
 ```
 
 ### 5.3 Execution Pipeline
+
+👉 **[View the Detailed Workflow Document Pipeline](workflow.md)**
+
 Follow these steps in order to reproduce the 12x12 results:
 
 1.  **Generate Data**:
