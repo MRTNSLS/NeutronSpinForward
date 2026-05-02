@@ -1,5 +1,6 @@
 import os
 import sys
+
 import numpy as np
 import torch
 import scipy.ndimage as ndimage
@@ -24,8 +25,7 @@ def generate_smooth_b_field(im_size, num_samples, minmax_B=5e-3):
         A_data[i, 1:-1, 1:-1, :] = grid
     return A_data
 
-def generate_dataset(num_samples=1000, im_size=12):
-    out_dir = 'data'
+def generate_dataset(num_samples=1000, im_size=12, out_dir='data'):
     os.makedirs(out_dir, exist_ok=True)
     
     nNeutrons = 256

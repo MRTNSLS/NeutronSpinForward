@@ -80,6 +80,21 @@ Follow these steps in order to reproduce the 12x12 results:
     python evaluate_results.py --train_split 0.95
     ```
 
+### 5.4 End-to-End Testing
+
+The `end_to_end_test.py` script combines all components into a single, cohesive evaluation workflow. It generates a new sample, runs the forward model, injects statistical noise, reconstructs the magnetic field, and re-evaluates the output.
+
+```bash
+# Run with clean data
+python end_to_end_test.py
+
+# Run with 5% statistical noise
+python end_to_end_test.py --noise_level 0.05
+
+# Use a specific trained model or seed
+python end_to_end_test.py --model_path models/spin2b_12x12.pth --seed 123
+```
+
 ## 6. Example Results
 
 ### 6.1 Input Data (Sinograms and Spectra)

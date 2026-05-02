@@ -15,7 +15,6 @@ __pycache__/
 # Ignore data and model directories (large binary files)
 data/
 data_v2/
-models/
 models_v3_cpu/
 artifacts/
 reconstruction_v2/
