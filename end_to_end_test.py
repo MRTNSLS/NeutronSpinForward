@@ -213,7 +213,7 @@ def run_end_to_end(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_path', type=str, default='models/spin2b_12x12_gpu.pth')
+    parser.add_argument('--model_path', type=str, default='models/spin2b_12x12.pth')
     parser.add_argument('--noise_level', type=float, default=0.0, help="Fraction of signal std to add as Gaussian noise")
     parser.add_argument('--seed', type=int, default=42, help="Random seed for generation")
     args = parser.parse_args()
