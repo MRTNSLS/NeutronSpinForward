@@ -20,3 +20,4 @@ artifacts/
 reconstruction_v2/
 models_test/
 tests/
+runs/
