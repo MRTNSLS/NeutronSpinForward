@@ -24,6 +24,12 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
+### 🔨 Build C-Extensions
+The pipeline uses a fast C-extension for ray tracing. Build it using:
+```bash
+python setup_ray_wrapper.py build_ext --inplace
+```
+
 ## ⚙️ Configuration
 All hyperparameters for data generation and model training are managed via JSON configuration files. 
 
