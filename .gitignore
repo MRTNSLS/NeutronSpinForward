@@ -21,3 +21,7 @@ reconstruction_v2/
 models_test/
 tests/
 runs/
+models/
+
+sync_to_server.sh
+ssh_config

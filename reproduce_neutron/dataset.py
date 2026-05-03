@@ -43,14 +43,7 @@ class NSpinFullDimDataset(Dataset):
         return self.length
 
     def __getitem__(self, i):
-        # Load a single sample into memory
-        b_item = self.B_raw[i]  # Shape: (nN, nAngles, nWavelengths, 3, 3)
-        # Transpose to (nW, 3, 3, nA, nN) -> indices (2, 3, 4, 1, 0)
-        b_reshaped = np.transpose(b_item, (2, 3, 4, 1, 0))
-        # Reshape to flatten wavelength and polarization dimensions
-        nW = b_reshaped.shape[0]
-        nA = b_reshaped.shape[3]
-        nN = b_reshaped.shape[4]
-        b_final = b_reshaped.reshape(nW * 9, nA, nN).astype(np.float32)
-
-        return torch.from_numpy(b_final), torch.from_numpy(self.A[i])
+        # Load a single sample directly into memory. 
+        # The data is already stored in the (Channels, Angles, Neutrons) layout
+        # which eliminates CPU-side transposes during training.
+        return torch.from_numpy(self.B_raw[i]), torch.from_numpy(self.A[i])

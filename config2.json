@@ -1,0 +1,52 @@
+{
+    "num_samples": 500,
+    "_num_samples": "Total number of samples to generate for the dataset",
+    
+    "im_size": 12,
+    "_im_size": "Resolution of the magnetic field grid (e.g., 12x12)",
+    
+    "nNeutrons": 256,
+    "_nNeutrons": "Number of neutrons simulated per projection angle",
+    
+    "nAngles": 360,
+    "_nAngles": "Number of projection angles around the sample (0 to 360 degrees)",
+    
+    "wavelengths_start": 2.0,
+    "wavelengths_end": 8.0,
+    "wavelengths_step": 0.1,
+    "_wavelengths": "Range and step size for neutron wavelengths in Angstroms",
+    
+    "scaleD": 2.0,
+    "_scaleD": "Geometric scaling factor for source/detector geometry",
+    
+    "minmax_B": 0.005,
+    "_minmax_B": "Maximum magnitude of the generated magnetic field (Tesla)",
+    
+    "seed": 42,
+    "_seed": "Random seed for reproducible data generation",
+    
+    "out_dir": "data",
+    "_out_dir": "Output directory for the generated datasets",
+    
+    "batch_size": 1,
+    "_batch_size": "Data Generation: Number of samples processed in parallel on the GPU",
+    
+    "train_epochs": 50,
+    "_train_epochs": "Training: Number of training epochs",
+    
+    "train_batch_size": 8,
+    "_train_batch_size": "Training: Batch size for neural network training",
+    
+    "train_lr": 0.0001,
+    "_train_lr": "Training: Learning rate for the optimizer",
+    
+    "hidden_dim": 512,
+    "_hidden_dim": "Model: Number of features in hidden layers (Increased for GPU)",
+    
+    "pool_res_h": 72,
+    "pool_res_w": 24,
+    "_pool_res": "Model: Spatial pooling resolution (Height, Width). (72, 24) is high-capacity GPU setting.",
+    
+    "train_split": 0.95,
+    "_train_split": "Training: Fraction of data used for training vs validation"
+}
