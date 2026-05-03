@@ -11,6 +11,11 @@ Version 0.1 introduces a unified, configuration-driven architecture that resolve
 - **Legacy Support**: Backwards compatibility for models trained on older CPU-optimized architectures.
 - **Enhanced Visualization**: Advanced side-by-side model comparison and sinogram analysis tools.
 
+## 📊 Example Reconstruction (Seed 1)
+Below is an example of the high-capacity model (`config2.json`) reconstructing a complex magnetic field from synthetic neutron data.
+
+![Example Reconstruction](assets/example_reconstruction.png)
+
 ## 🛠️ Environment Setup
 It is recommended to use a virtual environment:
 ```bash
